@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+    webserver:
+        image: airflow:latest
+        restart: always
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+        logging:
+            options:
+                max-size: 10m
+                max-file: "3"
+        volumes:
+            - ./scripts:/usr/local/airflow/dags
+            - ./docker/script/entrypoint.sh:/entrypoint.sh
+            - ./docker/config/airflow.cfg:/usr/local/airflow/airflow.cfg
+            - ./logs:/usr/local/airflow/logs
+            # - ./plugins:/usr/local/airflow/plugins
+        ports:
+            - "8090:8080"
+        command: webserver 
+        healthcheck:
+            test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+        tty: true
+
+    scheduler:
+        image: airflow:latest
+        restart: always
+        depends_on:
+            - webserver
+        volumes:
+            - ./scripts:/usr/local/airflow/dags
+            - ./docker/script/entrypoint.sh:/entrypoint.sh
+            - ./docker/config/airflow.cfg:/usr/local/airflow/airflow.cfg
+            - ./logs:/usr/local/airflow/logs
+            # - ./plugins:/usr/local/airflow/plugins
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+        tty: true
+

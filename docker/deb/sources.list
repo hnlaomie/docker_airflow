@@ -1,0 +1,3 @@
+deb https://mirrors.huaweicloud.com/debian buster main non-free contrib  
+deb https://mirrors.huaweicloud.com/debian buster-proposed-updates main contrib non-free  
+deb https://mirrors.huaweicloud.com/debian-security buster/updates main contrib non-free 
